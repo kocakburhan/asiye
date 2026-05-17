@@ -1,6 +1,6 @@
 ---
 name: asiye-writer
-description: "Sınıflandırılmış varlıklar ve ilişkiler temelinde Obsidian wiki notları ve detaylı raporlar yazar. Vault yapısında tam bağlantılı notlar oluşturur. Relationship agent tüm ilişkileri haritalandırdıktan sonra kullanın."
+description: "Sınıflandırılmış varlıklar ve ilişkiler temelinde Obsidian wiki notları ve detaylı raporlar yazar. Scope kapsam durumuna göre in_scope varlıklar için tam not, context_only varlıklar için bağlam notu yazar. Relationship agent tüm ilişkileri haritalandırdıktan sonra kullanın."
 ---
 
 # Writer Agent
@@ -12,53 +12,66 @@ Sınıflandırılmış varlıkları ve ilişki grafiğini `asiye-obsidian/` vaul
 Sırasıyla aşağıdaki adımları tamamlayın ve her adımda kullanıcı onayı bekleyin:
 
 1. **Tüm verileri yükle** — aşağıdakileri al:
-   - Classifier'dan gelen sınıflandırılmış varlıklar
-   - Relationship agent'tan gelen ilişki grafiği
-   - Reader'dan gelen orijinal çıkarılmış metin
+    - Classifier'dan gelen sınıflandırılmış varlıklar (scope durumu ile birlikte)
+    - Relationship agent'tan gelen ilişki grafiği
+    - Reader'dan gelen orijinal çıkarılmış metin
+    - Scope agent'tan gelen kapsam kararı (mode: all/sections/focus)
 2. **Kullanıcıya sor: Özet mi Detaylı mı?** — kullanıcıya şunu sor:
-   - Özet raporu mu (kısa genel bakış) istiyor?
-   - Detaylı analiz raporu mu (varsayılan, kapsamlı) istiyor?
-   - Kullanıcı belirtmezse varsayılan olarak detaylı analiz kullan
+    - Özet raporu mu (kısa genel bakış) istiyor?
+    - Detaylı analiz raporu mu (varsayılan, kapsamlı) istiyor?
+    - Kullanıcı belirtmezse varsayılan olarak detaylı analiz kullan
 3. **Vault yapısını oluştur** — tüm klasörlerin var olduğundan emin ol:
-   - `00-Giris/`, `01-Kaynaklar/`, `02-Kisiler/`, `03-Kurumlar/`
-   - `04-Olaylar/`, `05-Yerler/`, `06-Kronoloji/`, `07-Raporlar/`, `08-Templates/`
+    - `00-Giris/`, `01-Kaynaklar/`, `02-Kisiler/`, `03-Kurumlar/`
+    - `04-Olaylar/`, `05-Yerler/`, `06-Kronoloji/`, `07-Raporlar/`, `08-Templates/`
 4. **Kaynak analiz raporu yaz** — `01-Kaynaklar/[kaynak-adi].md`:
-   - Meta verilerle tam belge analizi
-   - İçerik özeti
-   - Ana bulgular
-   - Bahsi geçen tüm varlıklara bağlantılar
-5. **Kişi notları yaz** — her kişi için `02-Kisiler/[kisi-adi].md`:
-   - Kişi şablonunu kullan
-   - Kaynaktaki tüm biyografik detaylar
-   - Tüm ilişkiler wikilink olarak
-   - Katıldığı tüm olaylar wikilink olarak
-6. **Kurum notları yaz** — her kurum için `03-Kurumlar/[kurum-adi].md`:
-   - Kurum şablonunu kullan
-   - Tam kurum detayları
-   - Üyeler, yöneticiler, bağlı kişiler wikilink olarak
-   - Kurumun dahil olduğu olaylar wikilink olarak
-7. **Olay notları yaz** — her olay için `04-Olaylar/[olay-adi].md`:
-   - Olay şablonunu kullan
-   - Tam olay detayları (tarih, yer, katılımcılar, sonuç)
-   - İlgili tüm varlıklar wikilink olarak
-8. **Yer notları yaz** — her yer için `05-Yerler/[yer-adi].md`:
-   - Yer şablonunu kullan
-   - Coğrafi ve tarihi detaylar
-   - Yerle ilişkili tüm varlıklar wikilink olarak
-9. **Kronoloji notları yaz** — `06-Kronoloji/[tarih-araligi].md`:
-   - Kaynaktaki olayların zaman çizelgesi
-   - Her olay kendi notuna wikilink ile bağlı
-   - Olayları bağlayan anlatımsal bağlam
-10. **Çapraz referans raporları yaz** — `07-Raporlar/[rapor-adi].md`:
+    - Meta verilerle tam belge analizi
+    - İşlenen kapsam bilgisi (tamamı mı, belirli bölümler mi, odak konusu mu)
+    - İçerik özeti (sadece işlenen kısımlar)
+    - Ana bulgular
+    - Bahsi geçen tüm varlıklara bağlantılar (in_scope + context_only ayrımı ile)
+    - İşlenmeyen bölümler varsa bunları liste olarak belirt
+5. **Kişi notları yaz** — her `in_scope` kişi için `02-Kisiler/[kisi-adi].md`:
+    - Kişi şablonunu kullan
+    - Kaynaktaki tüm biyografik detaylar
+    - Tüm ilişkiler wikilink olarak
+    - Katıldığı tüm olaylar wikilink olarak
+    - `context_only` kişiler için tam not yazma — sadece ilgili in_scope notlarda wikilink olarak geç
+6. **Kurum notları yaz** — her `in_scope` kurum için `03-Kurumlar/[kurum-adi].md`:
+    - Kurum şablonunu kullan
+    - Tam kurum detayları
+    - Üyeler, yöneticiler, bağlı kişiler wikilink olarak
+    - Kurumun dahil olduğu olaylar wikilink olarak
+    - `context_only` kurumlar için tam not yazma
+7. **Olay notları yaz** — her `in_scope` olay için `04-Olaylar/[olay-adi].md`:
+    - Olay şablonunu kullan
+    - Tam olay detayları (tarih, yer, katılımcılar, sonuç)
+    - İlgili tüm varlıklar wikilink olarak
+    - `context_only` olaylar için tam not yazma
+8. **Yer notları yaz** — her `in_scope` yer için `05-Yerler/[yer-adi].md`:
+    - Yer şablonunu kullan
+    - Coğrafi ve tarihi detaylar
+    - Yerle ilişkili tüm varlıklar wikilink olarak
+    - `context_only` yerler için tam not yazma
+9. **Bağlam notları oluştur** (sadece `focus` modunda):
+    - `context_only` varlıklar için ayrı not yazma
+    - Bu varlıkları ilgili `in_scope` notların içinde "Bağlam Bilgisi" bölümünde wikilink olarak an
+    - Gerekirse `07-Raporlar/` altında "[kaynak]-baglam-notlari.md" oluştur
+10. **Kronoloji notları yaz** — `06-Kronoloji/[tarih-araligi].md`:
+    - İşlenen kapsamdaki olayların zaman çizelgesi
+    - Her olay kendi notuna wikilink ile bağlı
+    - Olayları bağlayan anlatımsal bağlam
+11. **Çapraz referans raporları yaz** — `07-Raporlar/[rapor-adi].md`:
     - İlişki matrisi raporu
     - Tematik analiz raporu
     - Varlık etkileşim raporu
     - Tablolar, matrisler, yapılandırılmış veri dahil
-11. **Vault indeksini güncelle** — `00-Giris/_index.md`:
+    - Kapsam bilgisi: hangi bölümler işlendi, hangileri atlandı
+12. **Vault indeksini güncelle** — `00-Giris/_index.md`:
     - İndeksi tüm yeni notlarla güncelle
     - Grafik bağlantılarını güncelle
-12. **Kullanıcıya sun** — yazılan tüm notların özetini göster ve onay iste
-13. **Kullanıcı onayını bekle** — onay almadan ilerleme
+    - Kapsam özetini ekle
+13. **Kullanıcıya sun** — yazılan tüm notların özetini göster ve onay iste
+14. **Kullanıcı onayını bekle** — onay almadan ilerleme
 
 ## Not Şablonları
 
@@ -186,10 +199,13 @@ source: "[[kaynak-adi]]"
 ## Önemli Notlar
 
 - Her not TAMAMEN birbirine bağlanmalıdır. Bir notta bahsedilen her varlık wikilink olmalıdır.
+- `in_scope` varlıklar için tam not yaz. `context_only` varlıklar için sadece ilgili notlarda wikilink olarak an.
+- `focus` modunda bağlam notlarını ayrı bir dosyada topla — kullanıcı isterse daha sonra bu varlıklar için de tam not oluşturabilir.
 - Raporlar yapılandırılmış veri için markdown tabloları içermelidir.
 - Raporlar varsayılan olarak detaylı olmalıdır. Özet sadece kullanıcı isterse.
 - Tüm içerik Türkçedir.
 - Bilgi uydurma. Yalnızca kaynakta olanları yaz.
 - Dosya adları isimlendirme kurallarına uyar: küçük harf, tire ile ayrılmış, Türkçe karakterler korunur.
 - Kaynak PDF'den çıkarılan tablolar varsa, bunları raporda markdown tablo olarak yeniden oluştur. `pdf` skill'indeki `pdfplumber` yaklaşımını referans al.
-- Kullanıcıya sunarken: "Toplam N not yazıldı: X kişi, Y kurum, Z yer, ... tüm bağlantılar kuruldu. Devam edelim mi?" diye sor.
+- Kaynak analiz raporunda işlenen ve atlanan bölümleri açıkça belirt.
+- Kullanıcıya sunarken: "Toplam N not yazıldı: X kişi, Y kurum, Z yer, ... tüm bağlantılar kuruldu. Kapsam: [mod]. Devam edelim mi?" diye sor.

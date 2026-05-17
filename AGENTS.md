@@ -11,17 +11,18 @@ meaningful. Nothing is forgotten.
 
 ## Pipeline Flow
 
-The pipeline runs as 6 sequential agents. Each agent completes its stage, presents
+The pipeline runs as 7 sequential agents. Each agent completes its stage, presents
 results to the user, and waits for approval before the next agent begins.
 
 ```
 ham-veriler/[document]
   → 1. Reader       → [onay]
-  → 2. Analyzer     → [onay]
-  → 3. Classifier   → [onay]
-  → 4. Relationship → [onay]
-  → 5. Writer       → [onay]
-  → 6. Discuss      → [onay/revize]
+  → 2. Scope        → [kullanıcı kapsam seçimi]
+  → 3. Analyzer     → [onay]
+  → 4. Classifier   → [onay]
+  → 5. Relationship → [onay]
+  → 6. Writer       → [onay]
+  → 7. Discuss      → [onay/revize]
   → asiye-obsidian/
 ```
 
@@ -29,12 +30,13 @@ ham-veriler/[document]
 
 | # | Agent | Skill | Responsibility |
 |---|-------|-------|---------------|
-| 1 | Reader | `.opencode/skills/asiye-reader/SKILL.md` | Ham belgeyi okur, metni çıkarır, yapılandırılmış çıkarım üretir |
-| 2 | Analyzer | `.opencode/skills/asiye-analyzer/SKILL.md` | Metni ayrıştırır, tüm varlıkları tanımlar (kişi, kurum, yer, olay, tarih, kavram) |
-| 3 | Classifier | `.opencode/skills/asiye-classifier/SKILL.md` | Varlıkları kategorize eder, vault klasör yapısına atar |
-| 4 | Relationship | `.opencode/skills/asiye-relationship/SKILL.md` | Varlıklar arası ilişkileri haritalandırır, ilişki grafiği oluşturur |
-| 5 | Writer | `.opencode/skills/asiye-writer/SKILL.md` | Obsidian wiki notları ve detaylı raporları tam bağlantılılık ile yazar |
-| 6 | Discuss | `.opencode/skills/asiye-discuss/SKILL.md` | Akademik tartışma, yeni perspektifler, revizyon önerileri |
+| 1 | Reader | `.opencode/skills/asiye-reader/SKILL.md` | Ham belgeyi okur, metni çıkarır, yapısal unsurları tespit eder, yapılandırılmış çıkarım üretir |
+| 2 | Scope | `.opencode/skills/asiye-scope/SKILL.md` | Metni başlıklara/bölümlere/konulara ayırır, kullanıcıya kapsam seçenekleri sunar (tamamı, belirli bölümler, özel odak), Analyzer'a kapsam filtresi iletir |
+| 3 | Analyzer | `.opencode/skills/asiye-analyzer/SKILL.md` | Kapsam filtresine göre metni ayrıştırır, tüm varlıkları tanımlar (kişi, kurum, yer, olay, tarih, kavram) |
+| 4 | Classifier | `.opencode/skills/asiye-classifier/SKILL.md` | Varlıkları kategorize eder, vault klasör yapısına atar |
+| 5 | Relationship | `.opencode/skills/asiye-relationship/SKILL.md` | Varlıklar arası ilişkileri haritalandırır, ilişki grafiği oluşturur |
+| 6 | Writer | `.opencode/skills/asiye-writer/SKILL.md` | Obsidian wiki notları ve detaylı raporları tam bağlantılılık ile yazar |
+| 7 | Discuss | `.opencode/skills/asiye-discuss/SKILL.md` | Akademik tartışma, yeni perspektifler, revizyon önerileri |
 
 ## Core Principles
 
@@ -137,7 +139,13 @@ source: "[[kaynak-adi]]"
 1. Kullanıcı belgeyi `ham-veriler/` klasörüne yerleştirir.
 2. Kullanıcı OpenCode'a yeni belgeyi haber verir.
 3. OpenCode, Reader agent'tan başlayarak pipeline'ı çalıştırır.
-4. Her agent `skill` tool'u ile kendi skill'ini yükler ve checklist'ini takip eder.
+4. Reader metni çıkarır ve yapısal unsurları tespit eder.
+5. Scope agent içeriği bölümlere ayırır ve kullanıcıya kapsam seçenekleri sunar:
+   - **Tamamını işle:** Belgenin tüm içeriği analiz edilir.
+   - **Belirli bölümleri seç:** Kullanıcı listeden bir veya birkaç bölüm seçer.
+   - **Özel odak belirle:** Kullanıcı belirli bir konu, tema veya kişi belirtir.
+6. Kullanıcının kapsam seçimine göre Analyzer agent çalışır.
+7. Her agent `skill` tool'u ile kendi skill'ini yükler ve checklist'ini takip eder.
 
 ## External Skills and Tools
 
@@ -163,7 +171,9 @@ Bu proje, `C:\Users\kocak\.agents\skills\` dizininde bulunan harici skill'lerden
 ### Skill Kullanma Kuralı
 Her agent, kendi göreviyle ilgili harici bir skill'in faydalı olabileceğini düşünürse, önce `skill` tool'u ile o skill'i yüklemeli ve talimatlarını takip etmelidir. Özellikle:
 - **Reader agent:** PDF, DOCX, veya özel formatlarda ilgili processing skill'ini kullan
-- **Analyzer/Writer agent:** Tablo çıkarımı gerektiğinde `pdf` skill'indeki `pdfplumber` yaklaşımını kullan
+- **Scope agent:** Belge yapısını analiz ederken metindeki başlık/bölüm işaretlerini dikkatle çıkar
+- **Analyzer agent:** Kapsam filtresine sadık kal, seçilen odak范围内 varlıkları tanımla. Tablo çıkarımı gerektiğinde `pdf` skill'indeki `pdfplumber` yaklaşımını kullan
+- **Writer agent:** Seçilen kapsam dışındaki varlıklar için not yazma (focus modunda context_only varlıkları bağlam notu olarak ekle)
 - **Discuss agent:** Kullanıcı harici doğrulama veya ek araştırma isterse `tavily-*` skill'lerini kullan
 
 ## Superpowers Skills
