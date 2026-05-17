@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Skill(tavily-research)",
+      "Bash(tvly research *)",
+      "Bash(TVLY_API_KEY=\"tvly-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\" tvly research \"Atatürk'ün Samsun'a gönderilmesi 1919\" --model pro)",
+      "Bash(tvly --version)",
+      "Bash(tvly search *)",
+      "Bash(export TVLY_API_KEY=\"tvly-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\")",
+      "Bash(tvly --help)"
+    ]
+  }
+}
